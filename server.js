@@ -1,7 +1,7 @@
 const express = require('express')
 const exphbs = require('express-handlebars')
 const path = require('path')
-const port = 3000
+const port = 80
 
 const app = express()
 
@@ -24,34 +24,53 @@ app.engine('.hbs', exphbs({
 }))
 app.set('view engine', '.hbs')
 app.set('views', path.join(__dirname, 'views'))
+app.use(express.static(path.join(__dirname, 'client/build')));
 
-var output = '';
-
-app.get('/log', (request, response) => {
-    this.output = syntaxHighlight(JSON.stringify(request, getCircularReplacer(),4));
-    response.render('json', {
-      output: this.output
-    })
-})
+app.id = ""
+app.entry = "";
+app.entries = [];
 
 app.post('/log', (request, response) => {
-    this.output = syntaxHighlight(JSON.stringify(request, getCircularReplacer(),4));
+    app.id = new Date().toISOString()
+    app.entry = JSON.stringify(request, getCircularReplacer())
+    app.entries.push({id: app.id, entry: app.entry});
+
     response.render('json', {
-      output: this.output
+        id: app.id,
+        entry: app.entry,
+        entries: app.entries
     })
 })
 
-app.get('/', (request, response) => {
+app.get('/get', (request, response) => {
+    app.id = request.query.id
+    entry = ""
+
+    if (app.id) {
+        for (i=0; i < app.entries.length; i++) {
+            if (app.entries[i].id == app.id) {
+                entry = syntaxHighlight(JSON.stringify(JSON.parse(app.entries[i].entry), getCircularReplacer(), 4))
+            }
+        }
+    }
+
   response.render('json', {
-    output: this.output
+      id: app.id,
+      entry: entry,
+      entries: app.entries
   })
 })
 
-app.post('/', (request, response) => {
-    var output = syntaxHighlight(JSON.stringify(request, getCircularReplacer(),4));
+app.get('/', (request, response) => {
+    entry = ""
+    if (app.entry) {
+        entry = syntaxHighlight(JSON.stringify(JSON.parse(app.entry), getCircularReplacer(), 4))
+    }
 
   response.render('json', {
-    output: output
+      id: app.id,
+      entry: entry,
+      entries: app.entries
   })
 })
 

@@ -1,3 +1,17 @@
-<pre>
-    {{{output}}}
-</pre>
+<div style="width: 1024px; margin: 0 auto;">
+
+    <fieldset name="entries" style="float: left; width: 200px;">
+        <legend>Requests:</legend>
+        {{#entries}}
+        <a href="/get?id={{id}}">{{id}}</a><br>
+        {{/entries}}
+    </fieldset>
+
+    <fieldset name="entry" style="float: right; width: 750px;">
+        <legend>Content ({{{id}}}):</legend>
+            <pre>
+            {{{entry}}}
+            </pre>
+    </fieldset>
+
+</div>
