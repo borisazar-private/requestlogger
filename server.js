@@ -1,7 +1,7 @@
 const express = require('express')
 const exphbs = require('express-handlebars')
 const path = require('path')
-const port = 8080
+const port = 8000
 
 const app = express()
 
